@@ -46,7 +46,7 @@
                     </v-list-item-avatar>
 
                     <v-list-item-content>
-                      <v-list-item-title>Message {{ n }}</v-list-item-title>
+                      <v-list-item-title>Message! {{ n }}</v-list-item-title>
 
                       <v-list-item-subtitle>
                         Lorem ipsum dolor sit amet, consectetur adipisicing
