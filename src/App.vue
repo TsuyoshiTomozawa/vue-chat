@@ -1,59 +1,99 @@
 <template>
-  <v-app>
-    <v-app-bar app color="primary" dark>
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
+  <div id="app">
+    <div id="nav">
+      <!-- <router-link to="/">Home</router-link> |
+      <router-link to="/about">About</router-link> -->
+    </div>
 
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
-
+    <!-- <v-app id="inspire"> -->
+    <!-- <v-system-bar app>
       <v-spacer></v-spacer>
 
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
-    </v-app-bar>
+      <v-icon>mdi-square</v-icon>
 
-    <v-main>
-      <!-- <HelloWorld /> -->
-      <Chat />
-    </v-main>
-  </v-app>
+      <v-icon>mdi-circle</v-icon>
+
+      <v-icon>mdi-triangle</v-icon>
+    </v-system-bar> -->
+
+    <v-navigation-drawer v-model="drawer" app>
+      <v-sheet color="grey lighten-4" class="pa-4">
+        <v-avatar class="mb-4" color="grey darken-1" size="64"></v-avatar>
+
+        <div class="username">john@vuetifyjs.com</div>
+      </v-sheet>
+
+      <v-divider></v-divider>
+
+      <v-list>
+        <v-list-item
+          v-for="[icon, text, to] in links"
+          :key="icon"
+          :to="to"
+          link
+        >
+          <v-list-item-icon>
+            <v-icon>{{ icon }}</v-icon>
+          </v-list-item-icon>
+
+          <v-list-item-content>
+            <v-list-item-title>{{ text }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+    <!-- </v-app> -->
+
+    <router-view />
+  </div>
 </template>
 
+<style lang="scss">
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+}
+
+#nav {
+  padding: 30px;
+
+  a {
+    font-weight: bold;
+    color: #2c3e50;
+
+    &.router-link-exact-active {
+      color: #42b983;
+    }
+  }
+}
+
+.grey.darken-1 {
+  background-color: #757575 !important;
+  border-color: #757575 !important;
+}
+
+.pa-4 {
+  padding: 16px !important;
+}
+
+.username {
+  padding-top: 15px;
+}
+</style>
+
 <script>
-// import HelloWorld from "./components/HelloWorld";
-import Chat from "./components/Chat";
-
 export default {
-  name: "App",
-
-  components: {
-    // HelloWorld,
-    Chat,
-  },
-
   data: () => ({
-    //
+    drawer: null,
+    links: [
+      ["mdi-inbox-arrow-down", "Inbox", "/"],
+      ["mdi-send", "Send", "/about"],
+      ["mdi-delete", "Trash", "/about"],
+      ["mdi-alert-octagon", "Spam", "/about"],
+    ],
   }),
 };
 </script>
