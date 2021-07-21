@@ -21,25 +21,28 @@
                       </v-list-item-subtitle>
                     </v-list-item-content>
                   </v-list-item>
-
-                  <v-divider
-                    v-if="n !== 6"
-                    :key="`divider-${index}`"
-                    inset
-                  ></v-divider>
                 </template>
               </v-list>
             </v-card>
           </v-col>
-          <v-textarea
-            append-icon="mdi-comment"
-            class="mx-2"
-            auto-grow
-            label="メッセージを送信する"
-            rows="1"
-          ></v-textarea>
         </v-row>
       </v-container>
+      <!-- <form> -->
+      <v-textarea
+        v-model="body"
+        append-icon="mdi-comment"
+        class="mx-2"
+        auto-grow
+        label="メッセージを送信する"
+        rows="3"
+      ></v-textarea>
+      <v-btn class="mr-4" type="submit" :disabled="invalid" @click="submit">
+        submit
+      </v-btn>
+      <v-btn @click="clear">
+        clear
+      </v-btn>
+      <!-- </form> -->
     </v-main>
   </v-app>
 </template>
@@ -50,7 +53,12 @@
 // import Chat from "@/components/Chat.vue";
 
 export default {
+  created() {
+    let user_id = this.$route.query.user_id;
+    console.log("user_id", user_id);
+  },
   data: () => ({
+    body: "",
     drawer: null,
     links: [
       ["mdi-inbox-arrow-down", "Inbox"],
@@ -64,7 +72,30 @@ export default {
       { message: "message3" },
       { message: "message4" },
     ],
+    // invalid: false,
   }),
+  computed: {
+    invalid() {
+      console.log("checkText call", this.body);
+      if (!this.body) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+  },
+  methods: {
+    clear() {
+      console.log("clear");
+      this.body = "";
+    },
+    submit() {
+      console.log("submit", this.body);
+      // this.messages.push({ message: this.body });
+      this.messages.unshift({ message: this.body });
+      this.body = "";
+    },
+  },
 };
 </script>
 
