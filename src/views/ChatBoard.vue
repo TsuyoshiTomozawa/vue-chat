@@ -1,5 +1,6 @@
 <template>
   <v-app id="inspire">
+    <sidebar />
     <v-main>
       <v-container class="py-8 px-6" fluid>
         <v-row>
@@ -52,10 +53,26 @@
 // import HelloWorld from "@/components/HelloWorld.vue";
 // import Chat from "@/components/Chat.vue";
 
+import firebase from "@/firebase/firebase";
+import Sidebar from "../components/layouts/Sidebar.vue";
+
 export default {
-  created() {
+  components: { Sidebar },
+  async created() {
     let user_id = this.$route.query.user_id;
     console.log("user_id", user_id);
+
+    const chatRef = firebase.firestore().collection("chats");
+    const snapshot = await chatRef.get();
+    console.log(snapshot);
+    if (snapshot.empty) {
+      return;
+    }
+
+    snapshot.forEach((doc) => {
+      console.log(doc.data());
+      this.messages.push(doc.data());
+    });
   },
   data: () => ({
     body: "",
@@ -66,12 +83,7 @@ export default {
       ["mdi-delete", "Trash"],
       ["mdi-alert-octagon", "Spam"],
     ],
-    messages: [
-      { message: "message1" },
-      { message: "message2" },
-      { message: "message3" },
-      { message: "message4" },
-    ],
+    messages: [],
     // invalid: false,
   }),
   computed: {

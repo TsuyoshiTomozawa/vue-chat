@@ -3,14 +3,28 @@ import VueRouter from 'vue-router'
 // import Home from '../views/Home.vue'
 import UserList from '../views/UserList.vue'
 import ChatBoard from '../views/ChatBoard.vue'
+import Login from '../views/Login.vue'
+import SignUp from '../views/SignUp.vue'
+import firebase from "@/firebase/firebase";
 
 Vue.use(VueRouter)
 
 const routes = [
   {
+    path: '/login',
+    name: 'Login',
+    component: Login
+  },
+  {
+    path: '/signup',
+    name: 'SignUp',
+    component: SignUp
+  },
+  {
     path: '/',
     name: 'UserList',
-    component: UserList
+    component: UserList,
+    meta: { requiresAuth: true },
   },
   {
     path: '/about',
@@ -33,4 +47,30 @@ const router = new VueRouter({
   routes
 })
 
+
+
+router.beforeEach((to, from, next) =>{
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+  console.log("requiresAuth", requiresAuth)
+  console.log("to.fullPath", to.fullPath)
+  if (requiresAuth) {
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        //ログイン中
+        next();
+      } else {
+        //未ログイン
+        next({
+          path: '/login',
+          query: { redirect: to.fullPath }
+        })
+      }
+    });
+  } else {
+    next();
+  }
+});
+
+
 export default router
+

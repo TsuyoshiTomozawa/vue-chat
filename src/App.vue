@@ -5,18 +5,9 @@
       <router-link to="/about">About</router-link> -->
     </div>
 
-    <!-- <v-app id="inspire"> -->
-    <!-- <v-system-bar app>
-      <v-spacer></v-spacer>
+    <!-- <sidebar /> -->
 
-      <v-icon>mdi-square</v-icon>
-
-      <v-icon>mdi-circle</v-icon>
-
-      <v-icon>mdi-triangle</v-icon>
-    </v-system-bar> -->
-
-    <v-navigation-drawer v-model="drawer" app>
+    <!-- <v-navigation-drawer v-model="drawer" app>
       <v-sheet color="grey lighten-4" class="pa-4">
         <v-avatar class="mb-4" color="grey darken-1" size="64"></v-avatar>
 
@@ -41,7 +32,7 @@
           </v-list-item-content>
         </v-list-item>
       </v-list>
-    </v-navigation-drawer>
+    </v-navigation-drawer> -->
     <!-- </v-app> -->
 
     <router-view />
@@ -85,7 +76,15 @@
 </style>
 
 <script>
+// import Sidebar from "./components/layouts/Sidebar.vue";
 export default {
+  components: {
+    // Sidebar,
+  },
+  mounted() {
+    const path = location.pathname;
+    console.log("path", path);
+  },
   data: () => ({
     drawer: null,
     links: [
