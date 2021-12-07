@@ -6,34 +6,41 @@
         <v-card-subtitle>ユーザー情報をご入力ください</v-card-subtitle>
         <v-btn text color="light-blue" to="login">ログイン画面はこちら</v-btn>
         <v-form
-          ref="form"
-          v-model="valid"
-          lazy-validation
-          style="margin:20px;"
-          @submit.prevent
+            ref="form"
+            v-model="valid"
+            lazy-validation
+            style="margin:20px;"
+            @submit.prevent
         >
           <v-text-field
-            v-model="email"
-            :rules="emailRules"
-            label="E-mail"
-            required
+              v-model="name"
+              :rules="nameRules"
+              label="UserName"
+              required
           ></v-text-field>
 
           <v-text-field
-            v-model="password"
-            type="password"
-            label="Password"
-            required
+              v-model="email"
+              :rules="emailRules"
+              label="E-mail"
+              required
+          ></v-text-field>
+
+          <v-text-field
+              v-model="password"
+              type="password"
+              label="Password"
+              required
           ></v-text-field>
 
           <div style="margin:0 auto;">
             <v-btn
-              type="submit"
-              class="mr-4"
-              style="margin-right:20px"
-              @click="submit"
-              color="success"
-              :disabled="isValid"
+                type="submit"
+                class="mr-4"
+                style="margin-right:20px"
+                @click="submit"
+                color="success"
+                :disabled="isValid"
             >
               Sign Up
             </v-btn>
@@ -41,11 +48,11 @@
               clear
             </v-btn>
             <v-alert
-              dense
-              outlined
-              type="error"
-              class="error-message"
-              v-if="errorMessage"
+                dense
+                outlined
+                type="error"
+                class="error-message"
+                v-if="errorMessage"
             >
               {{ errorMessage }}
             </v-alert>
@@ -58,9 +65,15 @@
 
 <script>
 import firebase from "@/firebase/firebase";
+
 export default {
   data: () => ({
     valid: false,
+    max: 5,
+    name: "",
+    nameRules: [
+      (v) => v.length <= 10 || `10文字以内で入力してください`,
+    ],
     email: "",
     emailRules: [
       (v) => !!v || "E-mail is required",
@@ -80,26 +93,30 @@ export default {
       console.log("submit call");
 
       firebase
-        .auth()
-        .createUserWithEmailAndPassword(this.email, this.password)
-        .then((userCredential) => {
-          // Signed in
-          let user = userCredential.user;
-          console.log("user", user);
-          console.log("success to create User");
+          .auth()
+          .createUserWithEmailAndPassword(this.email, this.password)
+          .then(async (result) => {
+            // Signed in
 
-          alert("success to create User");
 
-          localStorage.message = "新規作成に成功しました";
-          this.$router.push({ path: "/login" });
-        })
-        .catch((error) => {
-          let errorCode = error.code;
-          let errorMessage = error.message;
-          console.log(errorCode, errorMessage);
+            await result.user.updateProfile({
+              displayName: this.name
+            })
+            console.log("user", result.user);
+            console.log("success to create User");
 
-          this.errorMessage = "ユーザー登録に失敗しました";
-        });
+            // alert("success to create User");
+
+            localStorage.message = "新規作成に成功しました";
+            this.$router.push({path: "/login"});
+          })
+          .catch((error) => {
+            let errorCode = error.code;
+            let errorMessage = error.message;
+            console.log(errorCode, errorMessage);
+
+            this.errorMessage = "ユーザー登録に失敗しました";
+          });
     },
     validate() {
       this.$refs.form.validate();

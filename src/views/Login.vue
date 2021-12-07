@@ -1,39 +1,40 @@
 <template>
   <v-app>
     <div class="login-box">
-      <v-card elevation="24" style="margin:150px;padding:30px; tex">
+      <v-card elevation="24" style="margin:150px;padding:30px;">
         <v-card-title class="login-title">Login</v-card-title>
         <v-card-subtitle>ユーザー情報をご入力ください</v-card-subtitle>
         <v-btn text color="light-blue" to="signup">新規登録はこちら</v-btn>
         <v-form
-          ref="form"
-          v-model="valid"
-          lazy-validation
-          style="margin:20px;"
-          @submit.prevent
+            ref="form"
+            v-model="valid"
+            lazy-validation
+            style="margin:20px;"
+            @submit.prevent
         >
           <v-text-field
-            v-model="email"
-            :rules="emailRules"
-            label="E-mail"
-            required
+              v-model="email"
+              :rules="emailRules"
+              label="E-mail"
+              required
           ></v-text-field>
 
           <v-text-field
-            v-model="password"
-            type="password"
-            label="Password"
-            required
+              v-model="password"
+              :rules="passwordRules"
+              type="password"
+              label="Password"
+              required
           ></v-text-field>
 
           <div style="margin:0 auto;">
             <v-btn
-              type="submit"
-              class="mr-4"
-              style="margin-right:20px"
-              @click="submit"
-              color="success"
-              :disabled="isValid"
+                type="submit"
+                class="mr-4"
+                style="margin-right:20px"
+                @click="submit"
+                color="success"
+                :disabled="isValid"
             >
               Login
             </v-btn>
@@ -41,20 +42,20 @@
               clear
             </v-btn>
             <v-alert
-              dense
-              text
-              type="success"
-              class="success-message"
-              v-if="message"
+                dense
+                text
+                type="success"
+                class="success-message"
+                v-if="message"
             >
               {{ message }}
             </v-alert>
             <v-alert
-              dense
-              outlined
-              type="error"
-              class="error-message"
-              v-if="errorMessage"
+                dense
+                outlined
+                type="error"
+                class="error-message"
+                v-if="errorMessage"
             >
               {{ errorMessage }}
             </v-alert>
@@ -67,6 +68,7 @@
 
 <script>
 import firebase from "@/firebase/firebase";
+
 export default {
   data: () => ({
     valid: false,
@@ -76,6 +78,7 @@ export default {
       (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
     ],
     password: "",
+    passwordRules: [(v) => !!v || "password is required"],
     errorMessage: "",
     message: "",
   }),
@@ -94,36 +97,45 @@ export default {
   methods: {
     submit() {
       firebase
-        .auth()
-        .signInWithEmailAndPassword(this.email, this.password)
-        .then((userCredential) => {
-          console.log("success to login");
-          // Signed in
-          var user = userCredential.user;
-          console.log("user", user);
+          .auth()
+          .signInWithEmailAndPassword(this.email, this.password)
+          .then((result) => {
+            console.log("success to login");
+            // Signed in
+            const user = result.user;
+            console.log("user", user);
+            const auth = {
+              displayName: user.displayName,
+              email: user.email,
+              photoURL: user.photoURL,
+              uid: user.uid,
+              refrehToken: user.refreshToken
+            }
+            //user 保存
+            sessionStorage.setItem('user', JSON.stringify(auth));
 
-          let redirectUrl = this.$route.query.redirect
-            ? this.$route.query.redirect
-            : "/";
-          this.$router.push({ path: redirectUrl });
-        })
-        .catch((error) => {
-          let errorCode = error.code;
-          let errorMessage = error.message;
-          console.log(errorCode, errorMessage);
+            let redirectUrl = this.$route.query.redirect
+                ? this.$route.query.redirect
+                : "/";
+            this.$router.push({path: redirectUrl});
+          })
+          .catch((error) => {
+            let errorCode = error.code;
+            let errorMessage = error.message;
+            console.log(errorCode, errorMessage);
 
-          this.errorMessage = "ログインに失敗しました";
-        });
+            this.errorMessage = "ログインに失敗しました";
+          });
     },
-    validate() {
-      this.$refs.form.validate();
-    },
+    // validate() {
+    //   this.$refs.form.validate();
+    // },
     reset() {
       this.$refs.form.reset();
     },
-    resetValidation() {
-      this.$refs.form.resetValidation();
-    },
+    // resetValidation() {
+    //   this.$refs.form.resetValidation();
+    // },
   },
 };
 </script>
